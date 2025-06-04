@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>trains</title>
+</head>
+<body>
+
+{% if show_form %}
+    <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Search</button>
+{% endif %}
+
+    {% if full_train is not None %}
+        <h2>Trains Available</h2>
+
+        {% if full_train %}
+            <table>
+                <tr>
+                    <th>train no.</th>
+                    <th>train name</th>
+                    <th>departure time</th>
+                    <th>arrival time</th>
+                </tr>
+            
+            {% for train in full_train %}
+            
+                
+                <!-- <br/>
+                <br/> -->
+                <tr>
+                    <td>{{ train.0 }}  </td>
+                    <td>{{ train.1 }}  </td>
+                    <td>{{ train.2 }}  </td>
+                    <td>{{ train.4 }}  </td>
+                    <td rowspan="2"><a href="{% url 'myapp:book_train' train.6 train.7 train.8 journey_date %}">BOOK</a></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td></td>
+                    <td>{{ train.3 }}  </td>
+                    <td>{{ train.5 }}  </td>
+                    <td></td>
+                </tr>
+                <!-- <br/>
+                <br/> -->
+                
+            {% endfor %}
+            </table>
+        {% else %}
+            <p> "No Trains Available !" </p>
+        {% endif %}
+    {% endif %}
+
+
+</form>
+</body>
+</html>

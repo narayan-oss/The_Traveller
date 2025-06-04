@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    
+
+    <h2>Booking page</h2>
+
+    <p>{{num}}</p>
+    <p>{{name}}</p>
+    <p>{{st}}</p>
+    <p>{{end}}</p>
+    <p>{{journey_date}}</p>
+    
+    
+
+    {% if flag %}
+    <script type="text/javascript">
+        alert("Maximum of {{ MAX_ENTRIES }} passengers reached!");
+        // Optional: Disable the form submit button
+        // document.querySelector('form button[type="submit"]').disabled = true;
+    </script>
+    
+    {% else %}
+
+        <h3>Add passaengers</h3>
+        <form method="POST">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit">Add</button>
+
+    {% endif %}
+
+
+        <h3>passaengers Detail</h3>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th>Gender</th>
+                    <th>Travel Class</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for passenger in entries %}
+                <tr>
+                    <td>{{ passenger.name }}</td>
+                    <td>{{ passenger.age }}</td>
+                    <td>{{ passenger.gender }}</td>
+                    <td>{{ passenger.travel_class }}</td>
+                    <td>
+                    <a href="{% url 'myapp:delete_passenger' forloop.counter0 %}" class="btn btn-danger btn-sm">Delete</a>
+                </td>
+                </tr>
+                
+                {% empty %}
+                <tr>
+                    <td colspan="4">No passengers added.</td>
+                </tr>
+                {% endfor %}
+
+                <tr>
+                    <td>
+                        <a href="{% url 'myapp:init_pay' %}" class="btn btn-danger btn-sm">Pay</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+    
+
+
+
+
+
+
+
+</body>
+</html>

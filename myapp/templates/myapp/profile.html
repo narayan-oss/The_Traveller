@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Profile</title>
+</head>
+<body>
+    <!-- Basic Profile Info -->
+    <h1>User Profile</h1>
+    
+    <p>Username: {{ user.username }}</p>
+    
+    {% if user.user_profile_image %}
+        <img src="{{ user.user_profile_image.url }}" alt="Profile Pic" width="100">
+    {% else %}
+        <p>No profile image</p>
+    {% endif %}
+    
+    <p>Email: {{ user.email }}</p>
+
+        <!-- Password Change Form -->
+         <h2>Change Password</h2>
+         <form method="POST">
+            {% csrf_token %}
+            {{password_form.as_p}}
+            
+            <button type="submit">Change Passwd</button>
+         </form>
+
+         <!-- Messages (for success/error alerts) -->
+          {% if messages %}
+          <ul class="messages">
+            {% for message in messages %}
+            <li>{{message}}</li>
+            {% endfor %}
+          </ul>
+          {% endif %}
+    
+    <a href="{% url 'myapp:Logout' %}">Logout</a>
+
+    <script>
+        // Auto-dismiss messages after 5 seconds
+        setTimeout(() => {
+            const messages = document.querySelectorAll('.messages li');
+            messages.forEach(msg => msg.remove());
+        }, 5000);
+        </script>
+</body>
+</html>

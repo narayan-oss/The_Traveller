@@ -1,0 +1,16 @@
+<!-- myapp/templates/myapp/name.html -->
+<!DOCTYPE html>
+<html>
+<head><title>Test Form</title></head>
+<body>
+<form action="/getName/" method="POST">
+    {% csrf_token %}
+    {{ form.as_p}}
+    <button id = 'alert-button' type="submit">Subscribe</button>
+</form>
+
+<script src="DjangoProject/static/index.js">
+
+</script>
+</body>
+</html>

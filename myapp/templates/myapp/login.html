@@ -1,0 +1,23 @@
+{% load static %}
+
+<div class="container">
+    <h2>Login</h2>
+    <hr>
+    {% if messages %}
+    <ul class="messages">
+        {% for message in messages %}
+            <li class="{{ message.tags }}">{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+
+    <form method="post" novalidate autocomplete="off">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Login</button>
+    </form>
+    <hr>
+    <p>Not a user yet? <a href="{% url 'myapp:Signup' %}">Register here</a>.</p>
+
+</div>
+
