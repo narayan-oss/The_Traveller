@@ -1,23 +1,36 @@
 {% load static %}
 
-<div class="container">
-    <h2>Login</h2>
-    <hr>
-    {% if messages %}
-    <ul class="messages">
-        {% for message in messages %}
-            <li class="{{ message.tags }}">{{ message }}</li>
-        {% endfor %}
-    </ul>
-    {% endif %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title> 
+    <link rel="stylesheet" href="{% static 'myapp/css/register_login_style.css' %}">
+</head>
+<body>
 
-    <form method="post" novalidate autocomplete="off">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Login</button>
-    </form>
-    <hr>
-    <p>Not a user yet? <a href="{% url 'myapp:Signup' %}">Register here</a>.</p>
+<div class="blur-overlay"></div>
 
+<div class="auth-container">
+    <div class="auth-card">
+        <h2>Login</h2>
+        <hr>
+        {% if messages %}
+        <ul class="messages">
+            {% for message in messages %}
+                <li class="{{ message.tags }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        <form method="post" novalidate autocomplete="off">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <button type="submit" class="btn btn-primary w-100">Login</button>
+        </form>
+        <hr>
+        <p class="text-center">Not a user yet? <a href="{% url 'myapp:Signup' %}">Register here</a>.</p>
+    </div>
 </div>
 
+</body>
+</html>

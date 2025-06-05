@@ -13,83 +13,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dash</title>
 
-    <style>
-        .navbar-brand img {
-            margin-right: 10px; /* Space between logo and text */
-        }
-
-        .navbar-nav .nav-link {
-            margin: 0 15px; /* Even spacing between links */
-            font-size: 1.1rem; /* Adjust link size */
-        }
-
-        .navbar-brand {
-            display: flex; /* Align logo and text side by side */
-            align-items: center; /* Vertical alignment */
-        }
-
-        .dropdown-menu {
-            background-color: #343a40; /* Match dropdown with navbar color */
-        }
-
-        .dropdown-menu .dropdown-item {
-            color: #fff; /* White text for dropdown items */
-        }
-
-        .dropdown-menu .dropdown-item:hover {
-            background-color: #495057; /* Darker background on hover */
-        }
-
-        /* Fix for dropdown visibility */
-        .navbar .dropdown-menu {
-            z-index: 1050; /* Ensures dropdown is above other content */
-            position: absolute; /* Ensures proper placement */
-            top: 100%; /* Positions dropdown below the toggle */
-            right: 0; /* Align dropdown with the edge of the navbar */
-            
-        }
-
-        /* Make scrollbar thinner and styled */
-        ::-webkit-scrollbar {
-            width: 6px; /* Width of the scrollbar */
-        }
-
-        ::-webkit-scrollbar-track {
-            background: #f1f1f1; /* Track background */
-        }
-
-        ::-webkit-scrollbar-thumb {
-            background: #888; /* Thumb color */
-            border-radius: 10px; /* Rounded edges */
-        }
-
-        ::-webkit-scrollbar-thumb:hover {
-            background: #555; /* Darker on hover */
-        }
-
-
-
-        body {
-            padding-top: 80px;
-            display: flex;
-            flex-direction: column;
-            margin: 0;
-            height: 100%;
-            /* background: white url("images/background.png") no-repeat;; */
-        }
-
-        html {
-            height: 100%;
-        }
-
-        .content {
-            flex: 1;
-        }
-    </style>
     
 </head>
 <body>
 
+    <div class="navbar_wrapper">
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">
@@ -100,7 +28,7 @@
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                <ul class="navbar-nav ms-auto mb-2 mr-2 mb-lg-0">
                     
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'myapp:Search' %}">Search Trains</a>
@@ -137,6 +65,8 @@
             </div>
         </div>
     </nav>
+    </div>
+    
 
     {% if messages %}
     <ul class="messages">
@@ -149,7 +79,7 @@
     <div class="content">
     {% block main-content %}
 
-
+ <div class="custom-carousel-container">
     <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
   <div class="carousel-indicators">
     <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
@@ -184,7 +114,9 @@
     <span class="visually-hidden">Next</span>
   </button>
 </div>
+</div>
 
+ 
 
 <h1 style="text-align: center;">this is dash board</h1>
 
@@ -192,7 +124,9 @@
 <p>Lorem ipsum dolor sit amet consectet
     ur adipisicing elit. Deleniti asperiores volupt
     atum esse. Repellat, ut illum soluta fugiat iure quas, voluptate temp
-    ora nulla quos sapiente inventore adipisci est voluptatibus tenetur a.</p><br/><br/><br/><br/><br/>
+    ora nulla quos sapiente inventore adipisci est voluptatibus tenetur a.
+Lorem ipsum dolor sit amet consectetur adipisicing elit. Officiis sed nemo distinctio magnam nam quasi quisquam quia iste fugit unde deleniti nostrum saepe quas, delectus vel ut eos nisi quidem? Ipsum quisquam unde debitis necessitatibus excepturi tempore eligendi. 
+Ea voluptate esse ad eaque architecto expedita temporibus! Culpa labore provident iure?</p><br/><br/><br/><br/><br/>
 <p>Lorem ipsum dolor sit amet consectet
     ur adipisicing elit. Deleniti asperiores volupt
     atum esse. Repellat, ut illum soluta fugiat iure quas, voluptate temp

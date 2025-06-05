@@ -1,0 +1,81 @@
+/* Full-screen blurred background */
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: url("/static/myapp/images/bg-blur.png") no-repeat center center fixed;
+    background-size: cover;
+    filter: blur(2px);
+    z-index: -2;
+}
+
+/* Semi-transparent overlay to dim the background */
+body::after {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4); /* dark overlay */
+    z-index: -1;
+}
+
+/* Auth container centered */
+.auth-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+/* Card-like form */
+.auth-card {
+    background-color: rgba(255, 255, 255, 0.85);
+    padding: 2rem 2.5rem;
+    border-radius: 20px;
+    max-width: 450px;
+    width: 90%;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(6px);
+}
+
+/* Form elements styling */
+.auth-card h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-weight: bold;
+}
+
+.auth-card form input,
+.auth-card form select {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1rem;
+}
+
+.auth-card button {
+    width: 100%;
+    padding: 0.6rem;
+    background-color: #0052cc;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+.auth-card button:hover {
+    background-color: #003d99;
+}
+
+.auth-card p {
+    text-align: center;
+    margin-top: 1rem;
+}

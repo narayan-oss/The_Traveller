@@ -1,15 +1,30 @@
-
 {% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+    <link rel="stylesheet" href="{% static 'myapp/css/register_login_style.css' %}">
+</head>
+<body>
 
-
-
-<div class="container">
-    <h2>Register</h2>
-    <form method="post" novalidate>
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit" class="btn btn-primary">Register</button>
-    </form>
-    <p>Already a user? <a href="{% url 'myapp:Login' %}">Login here</a>.</p>
+<div class="auth-container">
+    <div class="auth-card">
+        <h2>Register</h2>
+        <form method="post" novalidate>
+            {% csrf_token %}
+            {% for field in form %}
+                <label>{{ field.label }}</label>
+                {{ field }}
+                {% if field.errors %}
+                    <div style="color: red;">{{ field.errors }}</div>
+                {% endif %}
+            {% endfor %}
+            <button type="submit">Register</button>
+        </form>
+        <p>Already a user? <a href="{% url 'myapp:Login' %}">Login here</a>.</p>
+    </div>
 </div>
 
+</body>
+</html>
