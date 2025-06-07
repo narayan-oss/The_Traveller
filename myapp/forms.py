@@ -6,6 +6,21 @@ from .models import  *
 User = get_user_model()
 
 
+class ProfileImageForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['user_profile_image']
+        widgets = {
+            'user_profile_image': forms.FileInput(attrs={
+                'accept': 'image/*'
+            })
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(ProfileImageForm, self).__init__(*args, **kwargs)
+        self.fields['user_profile_image'].label = ""  # Optional: remove label
+
+
 #Registration Form
 
 class RegistrationForm(UserCreationForm):
@@ -76,16 +91,6 @@ class PassengerForm(forms.ModelForm):
     class Meta:
         model = Booking
         fields = ['name', 'age', 'gender', 'travel_class']
-
-
-
-
-
-
-
-
-
-
 
 
 

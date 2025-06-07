@@ -1,17 +1,36 @@
+{% load static %}
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Payment</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'myapp/css/payment_style.css' %}">
 </head>
 <body>
-    
-    <h2>Payment Page</h2>
-
-    <p>USER : {{order.user}}</p>
-    <p>TOTAL_FARE : {{order.total_fare}}</p>
-
-    <a href="{% url 'myapp:paid' %}">PAY NOW</a>
+    <div class="payment-container">
+        <div class="payment-card">
+            <h2 class="payment-title"><i class="fas fa-credit-card"></i> Payment</h2>
+            
+            <div class="payment-details">
+                <div class="detail-item">
+                    <span class="detail-label">USER:</span>
+                    <span class="detail-value">{{order.user}}</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">TOTAL FARE:</span>
+                    <span class="detail-value">₹{{order.total_fare}}</span>
+                </div>
+            </div>
+            
+            <a href="{% url 'myapp:paid' %}" class="pay-now-btn">
+                <i class="fas fa-lock"></i> PAY NOW
+            </a>
+        </div>
+    </div>
 </body>
 </html>

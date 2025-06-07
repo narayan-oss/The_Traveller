@@ -1,0 +1,228 @@
+/* Base Styles */
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #0b0f1a;
+    color: #fff;
+    line-height: 1.6;
+}
+
+/* Container Styles */
+.profile-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 1rem;
+}
+
+.profile-card {
+    background-color: rgba(20, 20, 40, 0.8);
+    backdrop-filter: blur(10px);
+    border-radius: 15px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.5);
+    max-width: 500px;
+    width: 100%;
+    padding: 2rem;
+    text-align: center;
+}
+
+/* Messages Styling */
+.messages {
+    width: 100%;
+    margin-bottom: 1.5rem;
+    padding: 0.8rem;
+    background-color: rgba(0, 60, 0, 0.3);
+    border-radius: 8px;
+    border: 1px solid rgba(0, 200, 0, 0.2);
+}
+
+.messages ul {
+    padding: 0;
+    margin: 0;
+}
+
+.messages li {
+    list-style: none;
+    color: #6eff6e;
+    font-size: 0.95rem;
+}
+
+/* Header Styles */
+.user-header {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+}
+
+.user-header h1 {
+    margin: 0 0 0.3rem;
+    font-size: 1.8rem;
+    color: #4dabff;
+}
+
+.email {
+    margin: 0;
+    color: #aaa;
+    font-size: 1rem;
+}
+
+/* Section Styles */
+.section {
+    padding: 1.2rem 0;
+    margin: 0 auto;
+    max-width: 400px;
+}
+
+.section h2 {
+    margin-top: 0;
+    margin-bottom: 1.5rem;
+    color: #4dabff;
+    font-size: 1.4rem;
+}
+
+.divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(77, 171, 255, 0.3), transparent);
+    margin: 1rem auto;
+    width: 90%;
+}
+
+/* Profile Picture Styles */
+.profile-picture-container {
+    margin-bottom: 1.5rem;
+}
+
+.profile-img {
+    width: 130px;
+    height: 130px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid #4dabff;
+    box-shadow: 0 0 15px rgba(77, 171, 255, 0.3);
+}
+
+/* Form Styles */
+.image-form, .password-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.2rem;
+}
+
+.form-group {
+    width: 100%;
+    text-align: left;
+    margin-bottom: 1.2rem;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+    color: #ddd;
+}
+
+/* File Input Styles */
+.file-input-container {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    margin-bottom: 1.2rem;
+    background-color: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+input[type="file"] {
+    flex: 1;
+    padding: 0.8rem;
+    color: #ddd;
+    background: none;
+    border: none;
+    font-size: 0.95rem;
+    cursor: pointer;
+}
+
+.file-status {
+    padding: 0.8rem;
+    background-color: rgba(255, 255, 255, 0.05);
+    color: #aaa;
+    font-size: 0.9rem;
+    min-width: 120px;
+    text-align: center;
+}
+
+/* Input Styles */
+input[type="password"] {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    background-color: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    color: #fff;
+    font-size: 0.95rem;
+    transition: border-color 0.3s;
+}
+
+input:focus {
+    outline: none;
+    border-color: #4dabff;
+}
+
+/* Button Styles */
+button {
+    padding: 0.8rem 1.5rem;
+    background: linear-gradient(to right, #0052cc, #007bff);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+    font-size: 0.95rem;
+    width: 100%;
+    max-width: 200px;
+    margin-top: 0.5rem;
+}
+
+button:hover {
+    background: linear-gradient(to right, #0040a0, #0066cc);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Logout Styles */
+.logout-section {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.logout-button {
+    padding: 0.8rem 1.5rem;
+    background-color: transparent;
+    border: 1px solid #ff4d4d;
+    color: #ff4d4d;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.3s;
+    font-weight: 600;
+    display: inline-block;
+    font-size: 0.95rem;
+}
+
+.logout-button:hover {
+    background-color: rgba(255, 77, 77, 0.15);
+    color: #ff9999;
+}
+
+/* Error Styles */
+.errorlist {
+    color: #ff6b6b;
+    margin: 0.3rem 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: 0.85rem;
+    text-align: left;
+}

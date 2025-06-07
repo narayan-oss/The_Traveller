@@ -34,17 +34,20 @@ body::after {
 
 /* Card-like form */
 .auth-card {
-    background-color: rgba(255, 255, 255, 0.85);
-    padding: 2rem 2.5rem;
+    
+    background-color: rgba(10, 10, 20, 0.5);;
+    padding: 2.5rem 2rem;
     border-radius: 20px;
     max-width: 450px;
     width: 90%;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
-    backdrop-filter: blur(6px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(10px);
+    color: #fff; 
 }
 
 /* Form elements styling */
 .auth-card h2 {
+    
     text-align: center;
     margin-bottom: 1.5rem;
     font-weight: bold;
@@ -53,17 +56,45 @@ body::after {
 .auth-card form input,
 .auth-card form select {
     width: 100%;
-    padding: 0.5rem;
+    padding: 0.6rem;
     margin-bottom: 1rem;
     border: 1px solid #ccc;
-    border-radius: 8px;
+    border-radius: 10px;
     font-size: 1rem;
+    background-color: rgba(255, 255, 255, 0.1); /* semi-transparent input */
+    color: #fff;
 }
+
+.auth-card form input::placeholder {
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.auth-card form select {
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    height: 2.7rem;
+    line-height: 1.2;
+    background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/></svg>");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1rem;
+    padding-right: 2rem;
+}
+
+.auth-card form select,
+.auth-card form option {
+    background-color: rgba(20, 20, 40, 0.95);
+    color: #fff;
+    border: 1px solid #ccc;
+}
+
 
 .auth-card button {
     width: 100%;
-    padding: 0.6rem;
-    background-color: #0052cc;
+    padding: 0.8rem;
+    background: linear-gradient(to right, #0052cc, #007bff);
+/*     background-color: #0052cc; */
     color: white;
     border: none;
     border-radius: 8px;
@@ -79,3 +110,7 @@ body::after {
     text-align: center;
     margin-top: 1rem;
 }
+.auth-card p a {
+    color: #4dabff;
+}
+

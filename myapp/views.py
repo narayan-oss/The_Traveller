@@ -3,7 +3,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
-from .forms import RegistrationForm, LoginForm, TestForm, CustomPasswordChangeForm, TrainSearchForm, PassengerForm
+from .forms import RegistrationForm, LoginForm, TestForm, CustomPasswordChangeForm, TrainSearchForm, PassengerForm, ProfileImageForm
 from .models import *
 from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
 
@@ -59,26 +59,40 @@ def logout_view(request):
     messages.success(request, "you have been logged out.")
     return redirect('myapp:Dash')
 
+
+
 @login_required
 def profile_view(request):
+    # Initialize both forms with current data
+    image_form = ProfileImageForm(instance=request.user)
+    password_form = CustomPasswordChangeForm(request.user)
 
     if request.method == 'POST':
-        form = CustomPasswordChangeForm(request.user, request.POST)
-        if form.is_valid():
-            user = form.save()
-            update_session_auth_hash(request, user)  # Important! Keeps user logged in
-            messages.success(request, 'Password changed successfully!')
-            return redirect('myapp:Profile')
-    else :
-        form = CustomPasswordChangeForm(request.user)
-
+        # Handle image update
+        if 'update_image' in request.POST:
+            image_form = ProfileImageForm(request.POST, request.FILES, instance=request.user)
+            if image_form.is_valid():
+                image_form.save()
+                messages.success(request, 'Profile picture updated!')
+                # Reinitialize the form to clear file input
+                image_form = ProfileImageForm(instance=request.user)
+        
+        # Handle password change
+        elif 'change_password' in request.POST:
+            password_form = CustomPasswordChangeForm(request.user, request.POST)
+            if password_form.is_valid():
+                user = password_form.save()
+                update_session_auth_hash(request, user)
+                messages.success(request, 'Password changed successfully!')
+                # Reinitialize password form
+                password_form = CustomPasswordChangeForm(request.user)
+    
     context = {
-        'user': request.user,  # Pass the whole user object
-        # 'img_url': request.user.user_profile_image.url  # If using ImageField
-        'password_form': form
+        'user': request.user,
+        'image_form': image_form,
+        'password_form': password_form,
     }
     return render(request, 'myapp/profile.html', context)
-
 
 
 
