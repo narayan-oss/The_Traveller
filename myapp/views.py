@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.forms import ValidationError
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth import login, authenticate, logout, update_session_auth_hash
 from django.contrib.auth.decorators import login_required
@@ -110,6 +111,7 @@ def trainSearch_view(request):
             day = form.cleaned_data['date'].weekday()
             date = form.cleaned_data['date']
 
+            
             # Save results in session temporarily
             request.session['search_result'] = {
                 'start': start_station,

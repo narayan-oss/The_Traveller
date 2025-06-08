@@ -1,3 +1,4 @@
+from datetime import date
 from django import forms
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm, PasswordChangeForm
 from django.contrib.auth import get_user_model
@@ -104,6 +105,12 @@ class TrainSearchForm(forms.Form):
         label="date",
         widget=forms.DateInput(attrs={'type': 'date'})
         )
+    
+    def clean_date(self):
+        travel_date = self.cleaned_data['date']
+        if travel_date < date.today():
+            raise forms.ValidationError("Date must be today or in the future.")
+        return travel_date
 
 
 

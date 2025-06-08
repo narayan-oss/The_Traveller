@@ -20,6 +20,56 @@
                 </h1>
                 <form method="POST" class="search-form">
                     {% csrf_token %}
+                    {% if form.errors %}
+                    <div class="form-errors" id="formErrors">
+                        <button type="button" class="close-btn" onclick="closeErrors()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        {% for field in form %}
+                            {% for error in field.errors %}
+                                <div class="alert alert-danger">
+                                    <strong>{{ error|escape }}</strong>
+                                </div>
+                            {% endfor %}
+                        {% endfor %}
+                        {% for error in form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                <strong>{{ error|escape }}</strong>
+                            </div>
+                        {% endfor %}
+                    </div>
+
+                    <script>
+                        // Auto-hide after 5 seconds with fade effect
+                        setTimeout(function() {
+                            var errors = document.getElementById('formErrors');
+                            if (errors) {
+                                fadeOut(errors);
+                            }
+                        }, 5000);
+
+                        // Manual close function with fade effect
+                        function closeErrors(event) {
+                            if (event) {
+                                event.preventDefault();  // Prevent form submission
+                                event.stopPropagation(); // Stop event bubbling
+                            }
+                            var errors = document.getElementById('formErrors');
+                            if (errors) {
+                                fadeOut(errors);
+                            }
+                        }
+
+                        function fadeOut(element) {
+                            element.classList.add('fade-out');
+                            // Remove element after fade completes
+                            setTimeout(function() {
+                                element.style.display = 'none';
+                            }, 500);
+                        }
+                    </script>
+                    
+                    {% endif %}
                     <div class="form-group">
                         <label for="id_From"><i class="fas fa-map-marker-alt"></i> From</label>
                         {{ form.From }}
