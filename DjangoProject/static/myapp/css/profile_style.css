@@ -144,14 +144,7 @@ input[type="file"] {
     cursor: pointer;
 }
 
-.file-status {
-    padding: 0.8rem;
-    background-color: rgba(255, 255, 255, 0.05);
-    color: #aaa;
-    font-size: 0.9rem;
-    min-width: 120px;
-    text-align: center;
-}
+
 
 /* Input Styles */
 input[type="password"] {

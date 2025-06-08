@@ -1,0 +1,73 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Current Bookings</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'myapp/css/yourBookings_style.css' %}">
+</head>
+<body>
+    <div class="bookings-container">
+        <h1 class="bookings-header"><i class="fas fa-train"></i> Your Bookings</h1>
+        
+        {% if groups is None %}
+        <div class="no-bookings">
+            <i class="fas fa-ticket-alt"></i>
+            <p>No current bookings found!</p>
+        </div>
+        {% else %}
+        <div class="booking-cards">
+            {% for group in groups %}
+            <div class="booking-card">
+                <div class="booking-header">
+                    <h3>{{ group.train.train_number }} - {{ group.train.name }}</h3>
+                    <span class="status-badge {{ group.booking_status|lower }}">
+                        {{ group.booking_status }}
+                    </span>
+                </div>
+                
+                <div class="booking-details">
+                    <div class="detail-row">
+                        <span class="detail-label"><i class="fas fa-map-marker-alt"></i> Route:</span>
+                        <span class="detail-value">{{ group.from_station }} → {{ group.to_station }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label"><i class="fas fa-calendar-day"></i> Journey Date:</span>
+                        <span class="detail-value">{{ group.journey_date }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label"><i class="fas fa-user"></i> Passenger:</span>
+                        <span class="detail-value">{{ group.name }} ({{ group.age }} years, {{ group.get_gender_display }})</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label"><i class="fas fa-chair"></i> Class:</span>
+                        <span class="detail-value">{{ group.get_travel_class_display }}</span>
+                    </div>
+                    {% if group.coach_n_seat_num %}
+                    <div class="detail-row">
+                        <span class="detail-label"><i class="fas fa-ticket-alt"></i> Seat:</span>
+                        <span class="detail-value">{{ group.coach_n_seat_num }}</span>
+                    </div>
+                    {% endif %}
+                    <div class="detail-row">
+                        <span class="detail-label"><i class="fas fa-money-bill-wave"></i> Fare:</span>
+                        <span class="detail-value">₹{{ group.fare }}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label"><i class="fas fa-credit-card"></i> Payment:</span>
+                        <span class="detail-value {{ group.payment_status|lower }}">
+                            {{ group.get_payment_status_display }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+    </div>
+</body>
+</html>

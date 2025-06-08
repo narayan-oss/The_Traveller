@@ -136,6 +136,7 @@ def trainSearch_result_view(request):
         end_station = data['end']
         # day_int = data['date'].weekday()
         day_int = data['day']
+        journey_date = data['date']
 
         start_station_obj = Station.objects.get(station_name=start_station)
 
@@ -158,7 +159,10 @@ def trainSearch_result_view(request):
     form = TrainSearchForm()
     print(full_train)
 
-    return render(request, "myapp/train_search.html", {"form": form, "full_train": full_train, "show_form" : False, "journey_date": data['date'],})
+    return render(request, "myapp/train_search.html", {"form": form, "full_train": full_train, "show_form" : False, "journey_date": journey_date,
+        "start_station": start_station,
+        "end_station": end_station
+        })
 
 
 
@@ -221,24 +225,7 @@ def book_train(request, train_id, from_id, to_id, journey_date):
             'MAX_ENTRIES': MAX_ENTRIES, 
         })
 
-# def delete_entry(request, index):
 
-#     passengers = request.session.get('passengers', [])
-#     general_info = request.session.get('general_info', [])
-
-#     if not general_info:  # Ensure general_info exists
-#         return HttpResponseBadRequest("Invalid session data.")
-
-        
-#     if 0 <= index < len(passengers):
-#         passengers.pop(index)
-#         request.session['passengers'] = passengers
-#     return redirect('myapp:book_train',
-#                     train_id=general_info[0],
-#                     from_id=general_info[1],
-#                     to_id=general_info[2],
-#                     journey_date=general_info[3],
-#                     )
 
 def delete_entry(request, index):
     try:
@@ -378,6 +365,15 @@ def payment_success(request):
 #         BookingOrder.objects.filter(id=order_id).delete()
 #     request.session.flush()
 #     return render(request, 'payment_failed.html')
+
+
+def your_bookings_view(request):
+
+    User = request.user
+
+    groups = Booking.objects.filter(user = User)
+
+    return render(request, 'myapp/yourBookings.html', {'groups' : groups})
 
 
 

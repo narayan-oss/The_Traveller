@@ -1,0 +1,157 @@
+/* Base Styles */
+:root {
+    --dark-bg: #0f172a;
+    --card-bg: #1e293b;
+    --accent: #3b82f6;
+    --text-light: #f1f5f9;
+    --text-muted: #94a3b8;
+    --border-color: #334155;
+    --confirmed: #10b981;
+    --waiting: #f59e0b;
+    --cancelled: #ef4444;
+    --paid: #10b981;
+    --pending: #f59e0b;
+}
+
+body {
+    background-color: var(--dark-bg);
+    color: var(--text-light);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    padding: 20px;
+    min-height: 100vh;
+}
+
+.bookings-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Header */
+.bookings-header {
+    color: var(--text-light);
+    text-align: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+}
+
+/* No Bookings State */
+.no-bookings {
+    text-align: center;
+    padding: 50px 20px;
+    color: var(--text-muted);
+    font-size: 1.2rem;
+}
+
+.no-bookings i {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    opacity: 0.7;
+}
+
+/* Booking Cards */
+.booking-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 25px;
+}
+
+.booking-card {
+    background-color: var(--card-bg);
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    border-left: 4px solid var(--accent);
+}
+
+.booking-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.booking-header h3 {
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+/* Status Badges */
+.status-badge {
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-badge.confirmed {
+    background-color: rgba(16, 185, 129, 0.15);
+    color: var(--confirmed);
+}
+
+.status-badge.waiting {
+    background-color: rgba(245, 158, 11, 0.15);
+    color: var(--waiting);
+}
+
+.status-badge.cancelled {
+    background-color: rgba(239, 68, 68, 0.15);
+    color: var(--cancelled);
+}
+
+.paid {
+    color: var(--paid);
+}
+
+.pending {
+    color: var(--pending);
+}
+
+/* Booking Details */
+.booking-details {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.detail-row {
+    display: flex;
+    align-items: flex-start;
+}
+
+.detail-label {
+    min-width: 120px;
+    color: var(--text-muted);
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.detail-value {
+    flex: 1;
+    font-weight: 400;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .booking-cards {
+        grid-template-columns: 1fr;
+    }
+    
+    .detail-row {
+        flex-direction: column;
+        gap: 5px;
+    }
+    
+    .detail-label {
+        min-width: auto;
+    }
+}

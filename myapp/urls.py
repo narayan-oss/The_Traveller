@@ -19,6 +19,8 @@ urlpatterns = [
     path('delete/<int:index>/', views.delete_entry, name = 'delete_passenger'),
     path('pay/', views.initiate_payment, name = 'init_pay'),
     path('paid/', views.payment_success, name = 'paid'),
+    path('yourbookings/', views.your_bookings_view, name = 'YourBookings'),
+
     path('getName/', views.get_name, name = 'ourTest'),
     
 ]

@@ -4,70 +4,93 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>trains</title>
-        <link rel="stylesheet" href="{% static 'myapp/css/train_search_style.css' %}">
+    <title>Find Trains</title>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{% static 'myapp/css/train_search_style.css' %}">
 </head>
 <body>
-
-<div class="background-blur">
-
-<div class="search-container">
-
-    {% if show_form %}
-        <div class="search-card">
-            <h2>Search Trains</h2>
-            <form method="POST">
-                {% csrf_token %}
-                {{ form.as_p }}
-                <button type="submit">Search</button>
-            </form>
+    <div class="train-search-container">
+        {% if show_form %}
+        <div class="search-section">
+            <div class="search-card">
+                <h1 class="search-title">
+                    <i class="fas fa-train"></i> Find Your Train
+                </h1>
+                <form method="POST" class="search-form">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label for="id_From"><i class="fas fa-map-marker-alt"></i> From</label>
+                        {{ form.From }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_To"><i class="fas fa-map-marker-alt"></i> To</label>
+                        {{ form.To }}
+                    </div>
+                    <div class="form-group">
+                        <label for="id_date"><i class="fas fa-calendar-day"></i> Journey Date</label>
+                        {{ form.date }}
+                    </div>
+                    <button type="submit" class="search-btn">
+                        <i class="fas fa-search"></i> Search Trains
+                    </button>
+                </form>
+            </div>
         </div>
-    {% endif %}
+        {% endif %}
 
-    {% if full_train is not None %}
-        <div class="result-card">
-            <h2>Trains Available</h2>
+        {% if full_train is not None %}
+        <div class="results-section">
+            <div class="results-header">
+                <h2><i class="fas fa-list-ul"></i> Available Trains</h2>
+                <p class="route-info">
+                    {% if start_station and end_station %}
+                        {{ start_station }} → {{ end_station }} • 
+                    {% endif %}
+                    {{ journey_date }}
+                </p>
+            </div>
 
             {% if full_train %}
-                <table>
-                    <tr>
-                        <th>train no.</th>
-                        <th>train name</th>
-                        <th>departure time</th>
-                        <th>arrival time</th>
-                    </tr>
-                
+            <div class="trains-list">
                 {% for train in full_train %}
-                
+                <div class="train-card">
+                    <div class="train-header">
+                        <h3>{{ train.1 }}</h3>
+                        <span class="train-number">{{ train.0 }}</span>
+                    </div>
                     
-                    <!-- <br/>
-                    <br/> -->
-                    <tr>
-                        <td>{{ train.0 }}  </td>
-                        <td>{{ train.1 }}  </td>
-                        <td>{{ train.2 }}  </td>
-                        <td>{{ train.4 }}  </td>
-                        <td rowspan="2"><a class="book-btn"  href="{% url 'myapp:book_train' train.6 train.7 train.8 journey_date %}">BOOK</a></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td></td>
-                        <td>{{ train.3 }}  </td>
-                        <td>{{ train.5 }}  </td>
-                        <td></td>
-                    </tr>
-                    <!-- <br/>
-                    <br/> -->
+                    <div class="timings">
+                        <div class="departure">
+                            <span class="time">{{ train.3 }}</span>
+                            <span class="station">{{ train.2 }}</span>
+                        </div>
+                        <div class="duration">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                        <div class="arrival">
+                            <span class="time">{{ train.5 }}</span>
+                            <span class="station">{{ train.4 }}</span>
+                        </div>
+                    </div>
                     
+                    <div class="train-card-footer">
+                        <a href="{% url 'myapp:book_train' train.6 train.7 train.8 journey_date %}" class="book-btn">
+                            <i class="fas fa-ticket-alt"></i> Book
+                        </a>
+                    </div>
+                </div>
                 {% endfor %}
-                </table>
-            {% else %}
-                <p> "No Trains Available !" </p>
-            {% endif %}
             </div>
-    {% endif %}
-
-
-
+            {% else %}
+            <div class="no-trains">
+                <i class="fas fa-train"></i>
+                <p>No trains available for this route</p>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
 </body>
 </html>
