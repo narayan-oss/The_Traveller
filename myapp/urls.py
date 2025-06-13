@@ -9,6 +9,7 @@ app_name = 'myapp'
 urlpatterns = [
     path('', views.dash_view, name = 'Dash'),
     path('home/', views.home, name = 'Home'),
+    path('about/', views.about_view, name = 'About'),
     path('register/', views.register_view, name = 'Signup'),
     path('login/', views.login_view, name = 'Login'),
     path('logout/', views.logout_view, name = 'Logout'),

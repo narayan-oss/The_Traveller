@@ -1,0 +1,80 @@
+{% extends 'myapp/base.html' %}
+{% load static %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'myapp/css/about_stylev2.css' %}">
+{% endblock %}
+
+{% block main-content %}
+    
+    <div class="container">
+        <div class="box">
+            <h1>About us</h1>
+        </div>
+    </div>
+
+    <div class="fst-section">
+        <div class="box-l">
+            <div class="txt-box1"><p>Who we are?</p></div>
+            <div class="txt-box2"><p>We are Software Developers.</p></div>
+        </div>
+        <div class="box-r">
+            <div class="img-box">
+                <img src="{% static 'myapp/images/iitbhu.jpg' %}" alt="LightBlueTrain" style="width: 500px; height: 300px;">
+            </div>
+        </div>
+    </div>
+
+    <div class="mission-section">
+        <h2>Our Mission</h2>
+        <p>Helping Millions of Organizations Grow Better</p>
+        <div class="mission-content">
+            <p>We are committed to delivering innovative software solutions that transform businesses and create exceptional digital experiences for users worldwide.</p>
+        </div>
+    </div>
+
+    <div class="story-section">
+        <h2>Our Story</h2>
+        <p>Founded in 2023, we began as a small team of passionate developers with a vision to create impactful software solutions. Today, we've grown into a trusted development partner for companies across various industries, delivering cutting-edge technology solutions that drive real business results.</p>
+    </div>
+
+    <div class="team-section">
+        <h2>Our Team</h2>
+        <div class="team-members">
+            <div class="team-member">
+                <img src="{% static 'myapp/images/Pastedimage.png' %}" alt="Team Member 1">
+                <h3>John Doe</h3>
+                <p>Lead Developer</p>
+                <p>10+ years of experience in full-stack development</p>
+            </div>
+            <div class="team-member">
+                <img src="{% static 'myapp/images/bg-blur.png' %}" alt="Team Member 2">
+                <h3>Jane Smith</h3>
+                <p>UX Designer</p>
+                <p>Specializes in creating intuitive user interfaces</p>
+            </div>
+            <div class="team-member">
+                <img src="{% static 'myapp/images/default-user.jpeg' %}" alt="Team Member 3">
+                <h3>Mike Johnson</h3>
+                <p>Project Manager</p>
+                <p>Ensures projects are delivered on time and on budget</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="contact-form">
+        <h2>Connect With Us</h2>
+        <form action="mailto:zyxz1222@gmail.com" method="post" enctype="text/plain">
+            <div class="form-group">
+                <label for="email">Your Email:</label>
+                <input type="email" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="message">Message:</label>
+                <textarea id="message" name="message" rows="5" required></textarea>
+            </div>
+            <button type="submit">Send Feedback</button>
+        </form>
+    </div>
+
+{% endblock %}
