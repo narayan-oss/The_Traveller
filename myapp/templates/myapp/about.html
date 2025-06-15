@@ -1,41 +1,50 @@
 {% extends 'myapp/base.html' %}
 {% load static %}
 
+{% block title %}About Us{% endblock %}
+
 {% block extra_css %}
-    <link rel="stylesheet" href="{% static 'myapp/css/about_stylev2.css' %}">
+    <link rel="stylesheet" href="{% static 'myapp/css/about_style.css' %}">
+    <link rel="stylesheet" href="{% static 'myapp/css/footer_style.css' %}">
 {% endblock %}
 
 {% block main-content %}
     
-    <div class="container">
-        <div class="box">
-            <h1>About us</h1>
+    <div class="about-header">
+        <h1>About Us</h1>
+    </div>
+
+    <!-- Section 1: Text Left, Image Right -->
+    <div class="about-section">
+        <div class="about-text">
+            <h2>Who We Are?</h2>
+            <p>We are Software Developers @iitbhu. We've built this train booking platform using Django, leveraging its powerful Python-based framework that offers clean, pragmatic design and excellent documentation. Our goal is to simplify train travel booking while providing an exceptional user experience.</p>
+        </div>
+        <div class="about-image">
+            <img src="{% static 'myapp/images/iitbhu.jpg' %}" alt="IIT BHU Campus">
         </div>
     </div>
 
-    <div class="fst-section">
-        <div class="box-l">
-            <div class="txt-box1"><p>Who we are?</p></div>
-            <div class="txt-box2"><p>We are Software Developers.</p></div>
+    <!-- Section 2: Image Left, Text Right -->
+    <div class="about-section reverse">
+        <div class="about-image">
+            <img src="{% static 'myapp/images/iitbhu.jpg' %}" alt="Our Mission">
         </div>
-        <div class="box-r">
-            <div class="img-box">
-                <img src="{% static 'myapp/images/iitbhu.jpg' %}" alt="LightBlueTrain" style="width: 500px; height: 300px;">
-            </div>
-        </div>
-    </div>
-
-    <div class="mission-section">
-        <h2>Our Mission</h2>
-        <p>Helping Millions of Organizations Grow Better</p>
-        <div class="mission-content">
-            <p>We are committed to delivering innovative software solutions that transform businesses and create exceptional digital experiences for users worldwide.</p>
+        <div class="about-text">
+            <h2>Our Mission</h2>
+            <p>We're committed to revolutionizing train travel in India by providing a seamless booking experience. Our mission is to make rail travel accessible, efficient, and enjoyable for millions of passengers through innovative technology solutions.</p>
         </div>
     </div>
 
-    <div class="story-section">
-        <h2>Our Story</h2>
-        <p>Founded in 2023, we began as a small team of passionate developers with a vision to create impactful software solutions. Today, we've grown into a trusted development partner for companies across various industries, delivering cutting-edge technology solutions that drive real business results.</p>
+    <!-- Section 3: Text Left, Image Right -->
+    <div class="about-section">
+        <div class="about-text">
+            <h2>Our Story</h2>
+            <p>Founded in 2023 at IIT BHU, we started as a small team of passionate developers aiming to solve real-world transportation challenges. Today, we've grown into a trusted platform serving thousands of users, combining technical expertise with a deep understanding of India's rail network.</p>
+        </div>
+        <div class="about-image">
+            <img src="{% static 'myapp/images/iitbhu.jpg' %}" alt="Our Journey">
+        </div>
     </div>
 
     <div class="team-section">
@@ -43,21 +52,21 @@
         <div class="team-members">
             <div class="team-member">
                 <img src="{% static 'myapp/images/Pastedimage.png' %}" alt="Team Member 1">
-                <h3>John Doe</h3>
+                <h3>Narayan</h3>
                 <p>Lead Developer</p>
-                <p>10+ years of experience in full-stack development</p>
+                <p>Architecting robust backend solutions</p>
             </div>
             <div class="team-member">
                 <img src="{% static 'myapp/images/bg-blur.png' %}" alt="Team Member 2">
-                <h3>Jane Smith</h3>
+                <h3>n_a_r_a_y_a_n</h3>
                 <p>UX Designer</p>
-                <p>Specializes in creating intuitive user interfaces</p>
+                <p>Crafting intuitive user experiences</p>
             </div>
             <div class="team-member">
                 <img src="{% static 'myapp/images/default-user.jpeg' %}" alt="Team Member 3">
-                <h3>Mike Johnson</h3>
+                <h3>Manoj Saran</h3>
                 <p>Project Manager</p>
-                <p>Ensures projects are delivered on time and on budget</p>
+                <p>Ensuring timely project delivery</p>
             </div>
         </div>
     </div>
