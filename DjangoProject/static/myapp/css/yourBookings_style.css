@@ -155,3 +155,110 @@ body {
         min-width: auto;
     }
 }
+
+
+
+/* Messages */
+.messages {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    max-width: 400px;
+}
+
+.alert {
+    position: relative;
+    padding: 15px 40px 15px 20px;
+    margin-bottom: 15px;
+    border-radius: 6px;
+    animation: slideIn 0.5s forwards;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    opacity: 1;
+    transition: opacity 0.5s ease;
+}
+
+.alert.fade-out {
+    opacity: 0;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    color: inherit;
+    font-size: 1.2rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 5px;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+
+.close-btn:hover {
+    opacity: 1;
+}
+
+
+.alert-success {
+    background-color: rgba(16, 185, 129, 0.9);
+    color: white;
+}
+
+.alert-error {
+    background-color: rgba(239, 68, 68, 0.9);
+    color: white;
+}
+
+.alert-warning {
+    background-color: rgba(245, 158, 11, 0.9);
+    color: white;
+}
+
+@keyframes slideIn {
+    from { transform: translateX(100%); }
+    to { transform: translateX(0); }
+}
+
+/* Cancel Button - Improved Version */
+.cancel-btn {
+    background-color: transparent;
+    color: var(--cancelled);
+    border: 1px solid var(--cancelled);
+    padding: 8px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s ease;
+    margin-top: 15px;
+    font-size: 0.9rem;
+}
+
+.cancel-btn:hover {
+    background-color: rgba(239, 68, 68, 0.1);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 8px rgba(239, 68, 68, 0.2);
+}
+
+.cancel-btn i {
+    transition: transform 0.2s ease;
+}
+
+.cancel-btn:hover i {
+    transform: scale(1.1);
+}
+
+/* Add this to make the card footer more distinct */
+.booking-actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid var(--border-color);
+}
+

@@ -19,6 +19,31 @@ body {
     min-height: 100vh;
 }
 
+
+/* Hide browser autofill suggestions */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus,
+input:-internal-autofill-selected {
+    -webkit-text-fill-color: var(--text-light);
+    -webkit-box-shadow: 0 0 0px 1000px rgba(15, 23, 42, 0.7) inset;
+    transition: background-color 5000s ease-in-out 0s;
+}
+input[data-autocomplete="true"]::-webkit-contacts-auto-fill-button,
+input[data-autocomplete="true"]::-webkit-credentials-auto-fill-button {
+    visibility: hidden;
+    display: none !important;
+    pointer-events: none;
+    position: absolute;
+    right: 0;
+}
+/* For Firefox */
+input:-moz-ui-invalid {
+    box-shadow: none;
+}
+
+
+
 .train-search-container {
     max-width: 1200px;
     margin: 0 auto;
@@ -51,6 +76,15 @@ body {
     gap: 12px;
 }
 
+
+.messages {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    max-width: 400px;
+}
+
 .form-errors {
     margin-bottom: 15px;
     padding: 10px;
@@ -64,6 +98,44 @@ body {
     margin: 5px 0;
 }
 
+/* Messages styling */
+.messages {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    max-width: 400px;
+    transition: all 0.5s ease;
+}
+
+
+
+
+.messages .alert {
+    padding: 15px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    position: relative;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.alert-error {
+    color: #721c24;
+    background-color: #f8d7da;
+    border-color: #f5c6cb;
+}
+
+.messages .alert .close {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: inherit;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
 
 .search-form {
     display: flex;
@@ -75,6 +147,7 @@ body {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    position: relative; /* Needed for autocomplete positioning */
 }
 
 .form-group label {
@@ -93,14 +166,85 @@ body {
     border-radius: 8px;
     padding: 12px 16px;
     font-size: 1rem;
-    transition: all 0.3s;
 }
 
-.form-group input:focus {
-    outline: none;
-    border-color: var(--accent);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.25);
+
+/* Autocomplete Styles */
+.autocomplete-container {
+    position: relative;
 }
+
+.autocomplete-suggestions {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    z-index: 1000;
+    max-height: 300px;
+    overflow-y: auto;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 0 0 8px 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: none;
+}
+
+.suggestion-item {
+    padding: 10px 16px;
+    color: var(--text-light);
+    cursor: pointer;
+    transition: all 0.2s;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+
+.suggestion-item:hover {
+    background-color: rgba(59, 130, 246, 0.2);
+    color: var(--accent);
+}
+
+/* Enhance input fields when suggestions are visible */
+.form-group input:focus {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-color: transparent;
+}
+
+.form-group input:focus + .autocomplete-suggestions {
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .autocomplete-suggestions {
+        max-height: 200px;
+    }
+}
+
+
+.autocomplete-loading::after {
+    content: " ";
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 16px;
+    height: 16px;
+    border: 2px solid var(--text-muted);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: translateY(-50%) rotate(0deg); }
+    100% { transform: translateY(-50%) rotate(360deg); }
+}
+
 
 .search-btn {
     background-color: var(--accent);
@@ -188,7 +332,7 @@ body {
 
 .train-card-footer {
     display: flex;
-    justify-content: flex-end;
+    justify-content: space-between;
     margin-top: 1rem;
 }
 
@@ -325,4 +469,5 @@ body {
 
 .fade-out {
     opacity: 0;
+    transition: opacity 0.5s ease-out;
 }

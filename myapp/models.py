@@ -1,8 +1,11 @@
+import random
+import string
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from .manager import UserManager
-import datetime
+from datetime import datetime, time
 from multiselectfield import MultiSelectField
+from django.utils import timezone
 
 # Create your models here.
 
@@ -55,8 +58,8 @@ class Route(models.Model):
     platform_no = models.PositiveIntegerField(default=0)
 
     day_of_week = MultiSelectField(choices=DAYS_OF_WEEK, default=[0])  
-    arrival_time = models.TimeField(default=datetime.time(0, 0))
-    departure_time = models.TimeField(default=datetime.time(0, 0))
+    arrival_time = models.TimeField(default=time(0, 0))
+    departure_time = models.TimeField(default=time(0, 0))
     departure_next_day = models.BooleanField(default=False)
     step_distance = models.FloatField(help_text="Distance in kilometers", null=True, blank=True)
     
@@ -89,17 +92,32 @@ class Route(models.Model):
 class Coach(models.Model):
     COACH_TYPES = [
         ('AC', 'AC'),
-        ('Sleeper', 'Sleeper'),
-        ('General', 'General'),
+        ('ECONOMY', 'ECONOMY'),
+        ('SLEEPER', 'SLEEPER'),
+    ]
+
+    DAYS_OF_WEEK = [
+        (0, 'Monday'),
+        (1, 'Tuesday'),
+        (2, 'Wednesday'),
+        (3, 'Thursday'),
+        (4, 'Friday'),
+        (5, 'Saturday'),
+        (6, 'Sunday'),
     ]
 
     train = models.ForeignKey(Train, on_delete=models.CASCADE, related_name='coaches')
-    coach_name = models.CharField(max_length=5)
     coach_type = models.CharField(max_length=10, choices=COACH_TYPES)
+    total_seats = models.PositiveIntegerField(default=0)
     coach_seats = models.PositiveIntegerField(default=0)
+    day_of_reset = models.CharField(
+        max_length=14,  # Enough for "0,1,2,3,4,5,6"
+        help_text="Comma-separated days (e.g. 0,2,4)",
+        default='0'
+    )
 
     def __str__(self):
-        return f"{self.train.train_name} - {self.coach_name} ({self.coach_type})"
+        return f"{self.train.train_name} - ({self.coach_type})"
     
 
 
@@ -151,6 +169,29 @@ class Booking(models.Model):
     booking_status = models.CharField(max_length=20, choices=BOOKING_STATUS_CHOICES, default='Waiting')
     payment_status = models.CharField(max_length=20, choices=PAYMENT_STATUS_CHOICES, default='Pending')
     coach_n_seat_num = models.CharField(max_length=20, blank=True)
+
+    pnr_number = models.CharField(max_length=10, unique=True, blank=True)
+    
+    def save(self, *args, **kwargs):
+        if not self.pnr_number:
+            self.pnr_number = self.generate_pnr()
+        super().save(*args, **kwargs)
+    
+    def generate_pnr(self):
+        date_part = timezone.now().strftime('%d%m')
+        random_part = ''.join(random.choices(string.digits, k=6))
+        return f"{date_part}{random_part}"
+
+    def cancel(self):
+
+        if self.booking_status in ['Waiting', 'Confirmed']:
+
+            self.booking_status = 'Cancelled'
+            self.coach_n_seat_num = ''
+            self.save()
+            return True
+        
+        return False
 
     def __str__(self):
         return f"{self.user.username} - {self.train} - {self.journey_date}"

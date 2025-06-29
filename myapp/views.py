@@ -1,3 +1,5 @@
+from django.utils import timezone
+from datetime import timedelta, datetime
 from django.contrib import messages
 from django.forms import ValidationError
 from django.shortcuts import render, redirect, get_object_or_404
@@ -6,15 +8,18 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import AuthenticationForm
 from .forms import RegistrationForm, LoginForm, TestForm, CustomPasswordChangeForm, TrainSearchForm, PassengerForm, ProfileImageForm
 from .models import *
-from django.http import HttpResponse, HttpResponseBadRequest, HttpResponseRedirect
+from django.http import HttpResponse, JsonResponse, HttpResponseBadRequest, HttpResponseRedirect, HttpResponseForbidden
+from django.db.models import Q
+import re
 
 # Create your views here.
 
 def dash_view(request) :
     return render(request, "myapp/base.html")
 
-@login_required
-def home(request) :
+def home(request):
+    if not request.user.is_authenticated:
+        return redirect('myapp:Login')
     return render(request, "myapp/home.html")
 
 def about_view(request):
@@ -100,74 +105,169 @@ def profile_view(request):
 
 
 
-def trainSearch_view(request):
 
-    if(request.method == 'POST'):
+def station_autocomplete(request):
+    query = request.GET.get('q', '')
+    stations = Station.objects.filter(
+        Q(station_name__icontains=query) | 
+        Q(station_code__icontains=query)
+    )[:5]
+    suggestions = [{
+        'name': f"{s.station_name} ({s.station_code})",
+        'code': s.station_code,
+        'raw_name': s.station_name
+    } for s in stations]
+    return JsonResponse({'results': suggestions})
+
+def trainSearch_view(request):
+    if 'preserved_form_data' in request.session:
+        form = TrainSearchForm(request.session['preserved_form_data'])
+        del request.session['preserved_form_data']
+    elif request.method == 'POST':
         form = TrainSearchForm(request.POST)
         
-        if(form.is_valid()):
-
-            # used cleaned data instead of direct form.From or form.To
-            start_station = form.cleaned_data['From']
-            end_station = form.cleaned_data['To']
-            day = form.cleaned_data['date'].weekday()
-            date = form.cleaned_data['date']
-
-            
-            # Save results in session temporarily
-            request.session['search_result'] = {
-                'start': start_station,
-                'end': end_station,
-                'day': day,
-                'date': date.isoformat(),  # convert to string
-            }
-            return redirect('myapp:train_search_result')  # go to a clean GET view
-
+        if form.is_valid():
+            try:
+                start_station = form.cleaned_data['From']
+                end_station = form.cleaned_data['To']
+                
+                # Validate stations exist
+                start_code, start_clean = extract_station_info(start_station)
+                end_code, end_clean = extract_station_info(end_station)
+                
+                # Check if stations exist
+                Station.objects.get(
+                    Q(station_code=start_code) if start_code else 
+                    Q(station_name__iexact=start_clean)
+                )
+                Station.objects.get(
+                    Q(station_code=end_code) if end_code else 
+                    Q(station_name__iexact=end_clean)
+                )
+                
+                request.session['search_result'] = {
+                    'start': start_station,
+                    'end': end_station,
+                    'day': form.cleaned_data['date'].weekday(),
+                    'date': form.cleaned_data['date'].isoformat(),
+                }
+                return redirect('myapp:train_search_result')
+                
+            except Station.DoesNotExist as e:
+                messages.error(request, "One or more stations not found")
+                request.session['preserved_form_data'] = request.POST
+                return redirect('myapp:train_search')
+                
+            except Exception as e:
+                messages.error(request, "An error occurred. Please try again.")
+                request.session['preserved_form_data'] = request.POST
+                return redirect('myapp:train_search')
     else:
         form = TrainSearchForm()
-        
     
-    return render(request, "myapp/train_search.html", {"form" : form, "show_form" : True})
+    return render(request, "myapp/train_search.html", {
+        "form": form,
+        "show_form": True
+    })
 
+def extract_station_info(station_string):
+    match = re.search(r'(.+?)\s*\((\w+)\)$', station_string)
+    if match:
+        return match.group(2), match.group(1).strip()
+    return None, station_string.strip()
+
+
+
+def extract_coach_info(id):
+
+    train_instance = Train.objects.get(id=id)
+    coach_instances = Coach.objects.filter(train=train_instance)
+
+    info = {}
+    for obj in coach_instances:
+        info[obj.coach_type] = obj.coach_seats
+
+    return info
 
 
 def trainSearch_result_view(request):
     data = request.session.get('search_result')
-    full_train = []
+    if not data:
+        messages.error(request, "Search data expired. Please search again.")
+        return redirect('myapp:train_search')
 
-    if data:
-        start_station = data['start']
-        end_station = data['end']
-        # day_int = data['date'].weekday()
-        day_int = data['day']
-        journey_date = data['date']
-
-        start_station_obj = Station.objects.get(station_name=start_station)
-
-        half_route = Route.objects.filter(station__station_name=start_station, day_of_week__contains=str(day_int))
-        half_train = {r.train.train_number: [r.step_distance, r.departure_time] for r in half_route}
+    try:
+        start_code, start_clean = extract_station_info(data['start'])
+        end_code, end_clean = extract_station_info(data['end'])
         
-
-        for key, value in half_train.items():
-            full_route = Route.objects.filter(train__train_number=key, station__station_name=end_station)
+        # Get station objects
+        start_station = Station.objects.get(
+            Q(station_code=start_code) if start_code else 
+            Q(station_name__iexact=start_clean)
+        )
+        end_station = Station.objects.get(
+            Q(station_code=end_code) if end_code else 
+            Q(station_name__iexact=end_clean)
+        )
+        
+        # Find routes
+        day_int = data['day']
+        routes_from = Route.objects.filter(
+            station=start_station,
+            day_of_week__contains=str(day_int)
+        )
+        
+        full_train = []
+        for route in routes_from:
+            connecting_routes = Route.objects.filter(
+                train=route.train,
+                station=end_station,
+                step_distance__gt=route.step_distance
+            )
             
-            for route in full_route:
-                if route.step_distance > value[0]:
-                    
-                    trn = route.train.train_number
-                    v = [trn, route.train.train_name, start_station, str(value[1]), end_station, str(route.arrival_time)
-                         , route.train.id, start_station_obj.id, route.station.id]
+            for conn_route in connecting_routes:
+                full_train.append([
+                    route.train.train_number,
+                    route.train.train_name,
+                    start_clean,
+                    route.departure_time.strftime("%H:%M"),
+                    end_clean,
+                    conn_route.arrival_time.strftime("%H:%M"),
+                    route.train.id,
+                    start_station.id,
+                    end_station.id,
+                    extract_coach_info(route.train.id)
+                ])
 
-                    full_train.append(v)
-
-    form = TrainSearchForm()
-    print(full_train)
-
-    return render(request, "myapp/train_search.html", {"form": form, "full_train": full_train, "show_form" : False, "journey_date": journey_date,
-        "start_station": start_station,
-        "end_station": end_station
+        return render(request, "myapp/train_search.html", {
+            "form": TrainSearchForm(),
+            "full_train": full_train,
+            "show_form": False,
+            "journey_date": data['date'],
+            "start_station": start_clean,
+            "end_station": end_clean
         })
-
+        
+    except Station.DoesNotExist:
+        messages.error(request, "Station not found in our database")
+        request.session['preserved_form_data'] = {
+            'From': data['start'],
+            'To': data['end'],
+            'date': data['date']
+        }
+        return redirect('myapp:train_search')
+        
+    except Exception as e:
+        messages.error(request, "Error processing your request")
+        import traceback
+        traceback.print_exc()  # Log the full error to console
+        messages.error(request, f"Error: {str(e)}")  # Show actual error to user
+        request.session['preserved_form_data'] = {
+            'From': data['start'],
+            'To': data['end'],
+            'date': data['date']
+        }
+        return redirect('myapp:train_search')
 
 
 MAX_ENTRIES = 5
@@ -337,9 +437,9 @@ def payment_success(request):
         total_fare = total_fare + multi*dist*times[data['travel_class']]
 
 
-
+    bookings = []
     for data in passengers:
-        Booking.objects.create(
+        booking = Booking.objects.create(
             user = request.user,
             train = train,
             booking_order=order,
@@ -354,10 +454,48 @@ def payment_success(request):
             payment_status='Paid'
             
         )
+        bookings.append(booking)
     
-    # clear all session data
-    request.session.flush()
-    return render(request, 'myapp/booking_cnf.html')
+
+    # Get departure and arrival times
+    departure_route = Route.objects.filter(
+        train=train,
+        station=from_station
+    ).first()
+    arrival_route = Route.objects.filter(
+        train=train,
+        station=to_station
+    ).first()
+
+    departure_time = departure_route.departure_time.strftime("%H:%M") if departure_route else "N/A"
+    arrival_time = arrival_route.arrival_time.strftime("%H:%M") if arrival_route else "N/A"
+    
+    # Calculate arrival date (accounting for next day arrival if needed)
+    arrival_date = journey_date
+    if arrival_route and arrival_route.departure_next_day:
+        arrival_date += timedelta(days=1)
+
+        
+    keys_to_remove = ['pending_order', 'passengers', 'general_info']
+    for key in keys_to_remove:
+        if key in request.session:
+            del request.session[key]
+
+
+    context = {
+        'booking': bookings[0],  # Use first booking for header info
+        'passengers': bookings,
+        'departure_time': departure_time,
+        'arrival_time': arrival_time,
+        'arrival_date': arrival_date,
+        'distance': dist,
+        'total_fare': total_fare,
+        'total_fare_with_fee': total_fare + 23.60,
+    }
+
+    print(f"Saved journey_date: {booking.journey_date}")  # or log it
+
+    return render(request, 'myapp/ticket_pdf.html', context)
 
 
 
@@ -372,24 +510,84 @@ def payment_success(request):
 
 
 def your_bookings_view(request):
-
+    if not request.user.is_authenticated:
+        return redirect('login')
+    
     User = request.user
+    current_date = timezone.now().date()
+    bookings = Booking.objects.filter(user=request.user).order_by('journey_date')
 
-    groups = Booking.objects.filter(user = User)
-
-    return render(request, 'myapp/yourBookings.html', {'groups' : groups})
-
-
-
-
-
+    return render(request, 'myapp/yourBookings.html', {
+        'groups' : bookings,
+        'current_date' : current_date,
+        })
 
 
 
 
 
 
+def download_ticket(request, booking_id):
+    booking = get_object_or_404(Booking, id=booking_id)
+    if booking.user != request.user:
+        return HttpResponseForbidden()
+    
+    # Get related bookings for the same order
+    bookings = Booking.objects.filter(booking_order=booking.booking_order)
+    
+    # Get route info
+    departure_route = Route.objects.filter(
+        train=booking.train,
+        station=booking.from_station
+    ).first()
+    arrival_route = Route.objects.filter(
+        train=booking.train,
+        station=booking.to_station
+    ).first()
 
+    context = {
+        'booking': booking,
+        'passengers': bookings,
+        'departure_time': departure_route.departure_time.strftime("%H:%M") if departure_route else "N/A",
+        'arrival_time': arrival_route.arrival_time.strftime("%H:%M") if arrival_route else "N/A",
+        'distance': Route.get_distance_between_stations(booking.train, booking.from_station, booking.to_station),
+        'total_fare': booking.booking_order.total_fare,
+        'total_fare_with_fee': booking.booking_order.total_fare + 23.60,
+    }
+
+    # Render HTML
+    html_string = render_to_string('myapp/ticket_pdf.html', context)
+    html = HTML(string=html_string)
+    
+    # Generate PDF
+    result = html.write_pdf()
+    
+    # Create response
+    response = HttpResponse(content_type='application/pdf')
+    response['Content-Disposition'] = f'attachment; filename="ticket_{booking.booking_order.pnr_number}.pdf"'
+    response.write(result)
+    
+    return response
+
+
+
+
+def cancel_booking(request, booking_id):
+    if not request.user.is_authenticated:
+        return redirect('login')
+    
+    booking = get_object_or_404(Booking, id=booking_id, user=request.user)
+    
+    if booking.journey_date < timezone.now().date():
+        messages.error(request, "Cannot cancel past bookings")
+    elif booking.booking_status == 'Cancelled':
+        messages.warning(request, "Booking is already cancelled")
+    elif booking.cancel():
+        messages.success(request, "Booking cancelled successfully")
+    else:
+        messages.error(request, "Unable to cancel booking")
+    
+    return redirect('myapp:YourBookings')
 
 
 

@@ -9,6 +9,9 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{% static 'myapp/css/train_search_style.css' %}">
+    <!-- NEW: Add this for debounce functionality -->
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+
 </head>
 <body>
     <div class="train-search-container">
@@ -18,8 +21,22 @@
                 <h1 class="search-title">
                     <i class="fas fa-train"></i> Find Your Train
                 </h1>
-                <form method="POST" class="search-form">
+                <form method="POST" class="search-form" autocomplete="off">
                     {% csrf_token %}
+
+                    {% if messages %}
+                    <div class="messages" id="djangoMessages">
+                        {% for message in messages %}
+                        <div class="alert alert-{{ message.tags }}">
+                            {{ message }}
+                            <button type="button" class="close" onclick="closeMessage(this.parentElement)">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+
                     {% if form.errors %}
                     <div class="form-errors" id="formErrors">
                         <button type="button" class="close-btn" onclick="closeErrors()">
@@ -38,46 +55,23 @@
                             </div>
                         {% endfor %}
                     </div>
-
-                    <script>
-                        // Auto-hide after 5 seconds with fade effect
-                        setTimeout(function() {
-                            var errors = document.getElementById('formErrors');
-                            if (errors) {
-                                fadeOut(errors);
-                            }
-                        }, 5000);
-
-                        // Manual close function with fade effect
-                        function closeErrors(event) {
-                            if (event) {
-                                event.preventDefault();  // Prevent form submission
-                                event.stopPropagation(); // Stop event bubbling
-                            }
-                            var errors = document.getElementById('formErrors');
-                            if (errors) {
-                                fadeOut(errors);
-                            }
-                        }
-
-                        function fadeOut(element) {
-                            element.classList.add('fade-out');
-                            // Remove element after fade completes
-                            setTimeout(function() {
-                                element.style.display = 'none';
-                            }, 500);
-                        }
-                    </script>
+                
                     
                     {% endif %}
-                    <div class="form-group">
+
+                    <div class="form-group autocomplete-container">
                         <label for="id_From"><i class="fas fa-map-marker-alt"></i> From</label>
                         {{ form.From }}
+                        <div class="autocomplete-suggestions" id="from-suggestions"></div>
                     </div>
-                    <div class="form-group">
+                    
+                    <!-- Modified To field with autocomplete -->
+                    <div class="form-group autocomplete-container">
                         <label for="id_To"><i class="fas fa-map-marker-alt"></i> To</label>
                         {{ form.To }}
+                        <div class="autocomplete-suggestions" id="to-suggestions"></div>
                     </div>
+
                     <div class="form-group">
                         <label for="id_date"><i class="fas fa-calendar-day"></i> Journey Date</label>
                         {{ form.date }}
@@ -89,6 +83,8 @@
             </div>
         </div>
         {% endif %}
+
+
 
         {% if full_train is not None %}
         <div class="results-section">
@@ -126,9 +122,17 @@
                     </div>
                     
                     <div class="train-card-footer">
-                        <a href="{% url 'myapp:book_train' train.6 train.7 train.8 journey_date %}" class="book-btn">
+                        <div class="coach-info">
+                            <p>AC : {{ train.9.AC }}</p>
+                            <p>ECONOMY : {{ train.9.ECONOMY }}</p>
+                            <p>SLEEPER : {{ train.9.SLEEPER }}</p>
+                        </div>
+                        <div class="book-box">
+                            <a href="{% url 'myapp:book_train' train.6 train.7 train.8 journey_date %}" class="book-btn">
                             <i class="fas fa-ticket-alt"></i> Book
                         </a>
+                        </div>
+                        
                     </div>
                 </div>
                 {% endfor %}
@@ -142,5 +146,116 @@
         </div>
         {% endif %}
     </div>
+
+
+
+
+
+    <script>
+        // Auto-hide messages after 5 seconds
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle form errors
+            setTimeout(function() {
+                var errors = document.getElementById('formErrors');
+                if (errors) {
+                    fadeOut(errors);
+                }
+            }, 5000);
+
+            // Handle Django messages
+            var djangoMessages = document.getElementById('djangoMessages');
+            if (djangoMessages) {
+                setTimeout(function() {
+                    fadeOut(djangoMessages);
+                }, 5000);
+            }
+        });
+
+        // Unified close functions
+        function closeErrors(event) {
+            if (event) {
+                event.preventDefault();
+                event.stopPropagation();
+            }
+            var errors = document.getElementById('formErrors');
+            if (errors) {
+                fadeOut(errors);
+            }
+        }
+
+        function closeMessage(element) {
+            fadeOut(element.closest('.messages') || fadeOut(element));
+        }
+
+        function fadeOut(element) {
+            if (!element) return;
+            element.classList.add('fade-out');
+            setTimeout(function() {
+                element.style.display = 'none';
+            }, 500);
+        }
+    </script>
+
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Setup autocomplete for both fields
+        setupAutocomplete('id_From', 'from-suggestions');
+        setupAutocomplete('id_To', 'to-suggestions');
+        
+        function setupAutocomplete(inputId, suggestionsId) {
+            const input = document.getElementById(inputId);
+            const suggestions = document.getElementById(suggestionsId);
+            
+            input.setAttribute('autocomplete', 'off');
+            input.setAttribute('autocomplete', 'new-password');
+            // Hide suggestions when clicking elsewhere
+            document.addEventListener('click', function(e) {
+                if (e.target !== input) {
+                    suggestions.style.display = 'none';
+                }
+            });
+            
+            // Debounced input handler
+            input.addEventListener('input', _.debounce(function() {
+                const query = this.value.trim();
+                
+                if (query.length < 2) {
+                    suggestions.style.display = 'none';
+                    return;
+                }
+                
+                fetch(`/station-autocomplete/?q=${encodeURIComponent(query)}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.results && data.results.length > 0) {
+                            suggestions.innerHTML = '';
+                            data.results.forEach(item => {
+                                const suggestion = document.createElement('div');
+                                suggestion.className = 'suggestion-item';
+                                suggestion.textContent = item.name;
+                                suggestion.addEventListener('click', function() {
+                                    input.value = item.name;
+                                    suggestions.style.display = 'none';
+                                });
+                                suggestions.appendChild(suggestion);
+                            });
+                            suggestions.style.display = 'block';
+                        } else {
+                            suggestions.style.display = 'none';
+                        }
+                    });
+            }, 300));
+            
+            // Show suggestions when field is focused
+            input.addEventListener('focus', function() {
+                if (this.value.trim().length >= 2 && suggestions.innerHTML.trim() !== '') {
+                    suggestions.style.display = 'block';
+                }
+            });
+        }
+    });
+    </script>
+
 </body>
 </html>

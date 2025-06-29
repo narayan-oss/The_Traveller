@@ -99,8 +99,24 @@ class PassengerForm(forms.ModelForm):
 
 #simple Test form
 class TrainSearchForm(forms.Form):
-    From = forms.CharField(label="From", max_length=100)
-    To = forms.CharField(label="To", max_length=100)
+    From = forms.CharField(
+        label="From", 
+        max_length=100,
+        widget=forms.TextInput(attrs={
+            'autocomplete': 'off',
+            'id': 'id_From',
+            'data-autocomplete': 'true'
+        })
+        )
+    To = forms.CharField(
+        label="To", 
+        max_length=100,
+        widget=forms.TextInput(attrs={
+            'autocomplete': 'off',
+            'id': 'id_To',
+            'data-autocomplete': 'true'
+        })
+    )
     date = forms.DateField(
         label="date",
         widget=forms.DateInput(attrs={'type': 'date'})
