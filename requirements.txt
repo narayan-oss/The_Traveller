@@ -1,10 +1,11 @@
+APScheduler==3.11.0
 asgiref==3.8.1
 certifi==2025.6.15
 cffi==1.17.1
 charset-normalizer==3.4.2
 cryptography==45.0.4
 Django==5.2.1
-django-allauth==65.9.0
+django-apscheduler==0.7.0
 django-multiselectfield==0.1.13
 idna==3.10
 pillow==11.2.1
@@ -12,4 +13,5 @@ pycparser==2.22
 PyJWT==2.10.1
 requests==2.32.4
 sqlparse==0.5.3
+tzlocal==5.3.1
 urllib3==2.5.0
